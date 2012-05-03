@@ -215,7 +215,8 @@ class Crew( Person ):
     department  = Datapoint('department')
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{1.name}','{1.job}'>".format(self)
+        return u"<{0} '{1.name}', '{1.job}'>".\
+                        format(self.__class__.__name__, self)
 
 class Keyword( Element ):
     id   = Datapoint('id')
