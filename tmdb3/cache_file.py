@@ -49,7 +49,6 @@ from cache_engine import CacheEngine, CacheObject
 #
 ####################
 
-
 def _donothing(*args, **kwargs):
     pass
 
@@ -230,6 +229,7 @@ class FileEngine( CacheEngine ):
             # seems to have read fine, make sure we have write access
             if not os.access(self.cachefile, os.W_OK):
                 raise TMDBCacheWriteError(self.cachefile)
+            self.cachefd.close()
 
         except IOError as e:
             if e.errno == errno.ENOENT:
@@ -237,6 +237,7 @@ class FileEngine( CacheEngine ):
                 try:
                     self._open('w+b')
                     self._write([])
+                    self.cachefd.close()
                 except IOError as e:
                     if e.errno == errno.ENOENT:
                         # directory does not exist
@@ -257,7 +258,6 @@ class FileEngine( CacheEngine ):
     def get(self, date):
         self._init_cache()
         self._open('r+b')
-        
         with Flock(self.cachefd, Flock.LOCK_SH): # lock for shared access
             # return any new objects in the cache
             return self._read(date)
@@ -265,7 +265,6 @@ class FileEngine( CacheEngine ):
     def put(self, key, value, lifetime):
         self._init_cache()
         self._open('r+b')
-
         with Flock(self.cachefd, Flock.LOCK_EX): # lock for exclusive access
             newobjs = self._read(self.age)
             newobjs.append(FileCacheObject(key, value, lifetime))
@@ -273,7 +272,7 @@ class FileEngine( CacheEngine ):
             # this will cause a new file object to be opened with the proper
             # access mode, however the Flock should keep the old object open
             # and properly locked
-            self._open('r+b')
+            #self._open('r+b')
             self._write(newobjs)
             return newobjs
 
@@ -340,6 +339,7 @@ class FileEngine( CacheEngine ):
             obj.load(self.cachefd)
 
         self.free = emptycount
+        self.cachefd.seek(0)
         return newobjs
 
     def _write(self, data):
@@ -385,6 +385,7 @@ class FileEngine( CacheEngine ):
                 d.dumpdata(self.cachefd)
 
         self.cachefd.flush()
+        self.cachefd.seek(0)
 
     def expire(self, key):
         pass
