@@ -16,7 +16,8 @@ from cache_engine import Engines
 import cache_null
 import cache_file
 
-class Cache( object ):
+
+class Cache(object):
     """
     This class implements a persistent cache, backed in a file specified in
     the object creation. The file is protected for safe, concurrent access
@@ -40,7 +41,7 @@ class Cache( object ):
                 self._age = max(self._age, obj.creation)
 
     def _expire(self):
-        for k,v in self._data.items():
+        for k, v in self._data.items():
             if v.expired:
                 del self._data[k]
 
@@ -77,7 +78,7 @@ class Cache( object ):
         """
         return self.Cached(self, callback)
 
-    class Cached( object ):
+    class Cached(object):
         def __init__(self, cache, callback, func=None, inst=None):
             self.cache = cache
             self.callback = callback
@@ -90,16 +91,16 @@ class Cache( object ):
                 self.__doc__ = func.__doc__
 
         def __call__(self, *args, **kwargs):
-            if self.func is None: # decorator is waiting to be given a function
+            if self.func is None:  # decorator is waiting to be given a function
                 if len(kwargs) or (len(args) != 1):
-                    raise TMDBCacheError('Cache.Cached decorator must be called '+\
-                                         'a single callable argument before it '+\
+                    raise TMDBCacheError('Cache.Cached decorator must be called ' +
+                                         'a single callable argument before it ' +
                                          'be used.')
                 elif args[0] is None:
-                    raise TMDBCacheError('Cache.Cached decorator called before '+\
+                    raise TMDBCacheError('Cache.Cached decorator called before ' +
                                          'being given a function to wrap.')
                 elif not callable(args[0]):
-                    raise TMDBCacheError('Cache.Cached must be provided a '+\
+                    raise TMDBCacheError('Cache.Cached must be provided a ' +
                                          'callable object.')
                 return self.__class__(self.cache, self.callback, args[0])
             elif self.inst.lifetime == 0:
@@ -121,4 +122,3 @@ class Cache( object ):
             func = self.func.__get__(inst, owner)
             callback = self.callback.__get__(inst, owner)
             return self.__class__(self.cache, callback, func, inst)
-
