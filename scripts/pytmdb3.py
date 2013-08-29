@@ -50,4 +50,3 @@ if __name__ == '__main__':
     namespace = globals().copy()
     namespace.update(locals())
     code.InteractiveConsole(namespace).interact(banner)
-
