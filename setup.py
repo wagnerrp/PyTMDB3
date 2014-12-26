@@ -7,7 +7,7 @@ with open('README') as f:
 
 setup(
     name='tmdb3',
-    version='0.7.1',
+    version='0.7.2',
     description='TheMovieDB.org APIv3 interface',
     long_description=long_description,
     author='Raymond Wagner',
