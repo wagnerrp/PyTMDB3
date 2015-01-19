@@ -64,10 +64,12 @@ class Request(urllib2.Request):
         self._kwargs = dict([(kwa, kwv) for kwa, kwv in kwargs.items()
                                         if kwv is not None])
 
-        locale = get_locale()
         kwargs = {}
         for k, v in self._kwargs.items():
-            kwargs[k] = locale.encode(v)
+            if isinstance(v, unicode):
+                kwargs[k] = v.encode('utf-8')
+            else:
+                kwargs[k] = str(v)
         url = '{0}{1}?{2}'\
                 .format(self._base_url, self._url, urlencode(kwargs))
 
