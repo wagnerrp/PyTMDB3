@@ -860,6 +860,12 @@ class Season(NameRepr, Element):
     tvrage_id = Datapoint('tvrage_id', poller=_populate_external_ids)
 
 class Series(NameRepr, Element):
+    @classmethod
+    def ontheair(cls, locale=None):
+        res = SeriesSearchResult(Request('tv/on_the_air'), locale=locale)
+        res._name = 'On The Air'
+        return res
+
     id = Datapoint('id', initarg=1)
     backdrop = Datapoint('backdrop_path', handler=Backdrop, raw=False, default=None)
     authors = Datalist('created_by', handler=Person)
