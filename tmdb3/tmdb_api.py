@@ -22,7 +22,7 @@ for search and retrieval of text metadata and image URLs from TMDB.
 Preliminary API specifications can be found at
 http://help.themoviedb.org/kb/api/about-3"""
 
-__version__ = "v0.7.0"
+__version__ = "v0.7.2"
 # 0.1.0  Initial development
 # 0.2.0  Add caching mechanism for API queries
 # 0.2.1  Temporary work around for broken search paging
@@ -62,6 +62,10 @@ __version__ = "v0.7.0"
 # 0.6.17 Add userrating/votes to Image, add overview to Collection, remove 
 #           releasedate sorting from Collection Movies
 # 0.7.0  Add support for television series data
+# 0.7.1  Add rate limiter to cache engine
+# 0.7.2  Add similar and keywords to TV Series
+#        Fix unicode issues with search result object names
+#        Temporary fix for youtube videos with malformed URLs
 
 from request import set_key, Request
 from util import Datapoint, Datalist, Datadict, Element, NameRepr, SearchRepr
@@ -372,7 +376,7 @@ class Keyword(Element):
     name = Datapoint('name')
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} {0.name}>"\
+        return u"<{0.__class__.__name__} '{0.name}'>"\
                .format(self).encode('utf-8')
 
 
@@ -381,7 +385,7 @@ class Release(Element):
     country = Datapoint('iso_3166_1')
     releasedate = Datapoint('release_date', handler=process_date)
     def __repr__(self):
-        return u"<{0.__class__.__name__} {0.country}, {0.releasedate}>"\
+        return u"<{0.__class__.__name__} '{0.country}', {0.releasedate}>"\
                .format(self).encode('utf-8')
 
 
@@ -393,6 +397,7 @@ class Trailer(Element):
 
 class YoutubeTrailer(Trailer):
     def geturl(self):
+        self.source = self.source.encode('ascii',errors='ignore')
         return "http://www.youtube.com/watch?v={0}".format(self.source)
 
     def __repr__(self):
