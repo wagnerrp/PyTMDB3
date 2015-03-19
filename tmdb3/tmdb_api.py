@@ -861,9 +861,33 @@ class Season(NameRepr, Element):
 
 class Series(NameRepr, Element):
     @classmethod
+    def latest(cls):
+        req = Request('tv/latest')
+        req.lifetime = 600
+        return cls(raw=req.readJSON())
+
+    @classmethod
     def ontheair(cls, locale=None):
         res = SeriesSearchResult(Request('tv/on_the_air'), locale=locale)
         res._name = 'On The Air'
+        return res
+
+    @classmethod
+    def airingtoday(cls, locale=None):
+        res = SeriesSearchResult(Request('tv/airing_today'), locale=locale)
+        res._name = 'Airing Today'
+        return res
+
+    @classmethod
+    def mostpopular(cls, locale=None):
+        res = SeriesSearchResult(Request('tv/popular'), locale=locale)
+        res._name = 'Popular'
+        return res
+
+    @classmethod
+    def toprated(cls, locale=None):
+        res = SeriesSearchResult(Request('tv/top_rated'), locale=locale)
+        res._name = 'Top Rated'
         return res
 
     id = Datapoint('id', initarg=1)
