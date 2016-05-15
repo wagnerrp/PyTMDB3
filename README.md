@@ -229,7 +229,7 @@ List of Available Data
 |  integer              | revenue            |                                        |
 |  datetime             | releasedate        |                                        |
 |  string               | homepage           |                                        |
-|  string               | IMDB reference id  | 'ttXXXXXXX'                            |
+|  string               | imdb               | 'ttXXXXXXX'                            |
 |  Backdrop             | backdrop           |                                        |
 |  Poster               | poster             |                                        |
 |  float                | popularity         |                                        |
