@@ -16,6 +16,8 @@ from urllib import urlencode
 import urllib2
 import json
 import os
+import gzip
+import StringIO
 
 DEBUG = False
 cache = Cache(filename='pytmdb3.cache')
@@ -115,7 +117,13 @@ class Request(urllib2.Request):
         url = self.get_full_url()
         try:
             # catch HTTP error from open()
-            data = json.load(self.open())
+            response = self.open()
+            page = response.read()
+            if response.headers.get('content-encoding', '') == 'gzip':
+                page = StringIO.StringIO(page)
+                gzipper = gzip.GzipFile(fileobj=page)
+                page = gzipper.read()
+            data = json.loads(page)
         except TMDBHTTPError, e:
             try:
                 # try to load whatever was returned
