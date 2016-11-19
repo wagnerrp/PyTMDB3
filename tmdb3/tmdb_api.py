@@ -921,11 +921,41 @@ class Season(NameRepr, Element):
 
 class Series(NameRepr, Element):
 
-    # @classmethod
-    # def discover(cls, locale=None, **kwargs):
-    #     res = MovieSearchResult(Request('discover/movie', **kwargs), locale=locale)
-    #     res._name = 'Discover'
-    #     return res
+    @classmethod
+    def latest(cls):
+        req = Request('tv/latest')
+        req.lifetime = 600
+        return cls(raw=req.readJSON())
+
+    @classmethod
+    def discover(cls, locale=None, **kwargs):
+        res = SeriesSearchResult(Request('discover/tv', **kwargs), locale=locale)
+        res._name = 'Discover'
+        return res
+
+    @classmethod
+    def ontheair(cls, locale=None):
+        res = SeriesSearchResult(Request('tv/on_the_air'), locale=locale)
+        res._name = 'On The Air'
+        return res
+
+    @classmethod
+    def airingtoday(cls, locale=None):
+        res = SeriesSearchResult(Request('tv/airing_today'), locale=locale)
+        res._name = 'Airing Today'
+        return res
+
+    @classmethod
+    def mostpopular(cls, locale=None):
+        res = SeriesSearchResult(Request('tv/popular'), locale=locale)
+        res._name = 'Popular'
+        return res
+
+    @classmethod
+    def toprated(cls, locale=None):
+        res = SeriesSearchResult(Request('tv/top_rated'), locale=locale)
+        res._name = 'Top Rated'
+        return res
 
     id = Datapoint('id', initarg=1)
     backdrop = Datapoint('backdrop_path', handler=Backdrop, raw=False, default=None)

@@ -231,7 +231,7 @@ List of Available Data
 |  datetime             | releasedate        |                                        |
 |  string               | originallanguage   |                                        |
 |  string               | homepage           |                                        |
-|  string               | IMDB reference id  | 'ttXXXXXXX'                            |
+|  string               | imdb               | imdb reference: 'ttXXXXXXX'            |
 |  Backdrop             | backdrop           |                                        |
 |  Poster               | poster             |                                        |
 |  float                | popularity         |                                        |
