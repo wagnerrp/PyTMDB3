@@ -22,7 +22,7 @@ for search and retrieval of text metadata and image URLs from TMDB.
 Preliminary API specifications can be found at
 http://help.themoviedb.org/kb/api/about-3"""
 
-__version__ = "v0.7.2"
+__version__ = "v0.7.3"
 # 0.1.0  Initial development
 # 0.2.0  Add caching mechanism for API queries
 # 0.2.1  Temporary work around for broken search paging
@@ -66,6 +66,17 @@ __version__ = "v0.7.2"
 # 0.7.2  Add similar and keywords to TV Series
 #        Fix unicode issues with search result object names
 #        Temporary fix for youtube videos with malformed URLs
+# 0.7.3  Added a few more missing Person properties:
+#        (gender, imdb, popularity)
+#        Added Video element
+#        Added Movie class method discover
+#        Added missing Movie properties and methods:
+#        (status, originallanguage, video, videos, recommendations)
+#        Updated API statuses (from https://github.com/pawel-zet)
+#        Added Series methods (from https://github.com/alanjds):
+#        (latest, discover, ontheair, airingtoday, mostpopular, toprated)
+#        PEP8 fixes and some typos
+#        Updated readme
 
 from request import set_key, Request
 from util import Datapoint, Datalist, Datadict, Element, NameRepr, SearchRepr
