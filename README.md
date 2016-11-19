@@ -225,9 +225,11 @@ List of Available Data
 |  string               | tagline            |                                        |
 |  string               | overview           |                                        |
 |  integer              | runtime            |                                        |
+|  string               | status             |                                        |
 |  integer              | budget             |                                        |
 |  integer              | revenue            |                                        |
 |  datetime             | releasedate        |                                        |
+|  string               | originallanguage   |                                        |
 |  string               | homepage           |                                        |
 |  string               | IMDB reference id  | 'ttXXXXXXX'                            |
 |  Backdrop             | backdrop           |                                        |
@@ -236,6 +238,7 @@ List of Available Data
 |  float                | userrating         |                                        |
 |  integer              | votes              |                                        |
 |  boolean              | adult              |                                        |
+|  boolean              | video              |                                        |
 |  Collection           | collection         |                                        |
 |  list(Genre)          | genres             |                                        |
 |  list(Studio)         | studios            |                                        |
@@ -246,12 +249,14 @@ List of Available Data
 |  list(Crew)           | crew               |                                        |
 |  list(Backdrop)       | backdrops          |                                        |
 |  list(Poster)         | posters            |                                        |
+|  list(Video)          | videos             |                                        |
 |  list(Keyword)        | keywords           |                                        |
 |  dict(Release)        | releases           | indexed by country                     |
 |  list(Translation)    | translations       |                                        |
 |  list(Movie)          | similar            |                                        |
 |  list(List)           | lists              |                                        |
 |  list(Movie)          | getSimilar()       |                                        |
+|  list(Movie)          | recommendations    |                                        |
 |  None                 | setFavorite(bool)  | mark favorite status for current user  |
 |  None                 | setRating(int)     | rate movie by current user             |
 |  None                 | setWatchlist(bool) | mark watchlist status for current user |
@@ -268,6 +273,7 @@ List of Available Data
 |  list(Movie)          | favorites()        | current user's favorite movies              |
 |  list(Movie)          | ratedmovies()      | movies rated by current user                |
 |  list(Movie)          | watchlist()        | movies marked to watch by current user      |
+|  list(Movie)          | discover()         | discover movies by different types of data  |
 
 #### Series:
 |  type                 | name               |
@@ -374,6 +380,9 @@ List of Available Data
 |  string               | homepage           |
 |  Profile              | profile            |
 |  boolean              | adult              |
+|  integer              | gender             |
+|  string               | imdb               |
+|  float                | popularity         |
 |  list(string)         | aliases            |
 |  list(ReverseCast)    | roles              |
 |  list(ReverseCrew)    | crew               |

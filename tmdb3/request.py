@@ -68,8 +68,7 @@ class Request(urllib2.Request):
         kwargs = {}
         for k, v in self._kwargs.items():
             kwargs[k] = locale.encode(v)
-        url = '{0}{1}?{2}'\
-                .format(self._base_url, self._url, urlencode(kwargs))
+        url = '{0}{1}?{2}'.format(self._base_url, self._url, urlencode(kwargs))
 
         urllib2.Request.__init__(self, url)
         self.add_header('Accept', 'application/json')
