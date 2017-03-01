@@ -22,61 +22,7 @@ for search and retrieval of text metadata and image URLs from TMDB.
 Preliminary API specifications can be found at
 http://help.themoviedb.org/kb/api/about-3"""
 
-__version__ = "v0.7.3"
-# 0.1.0  Initial development
-# 0.2.0  Add caching mechanism for API queries
-# 0.2.1  Temporary work around for broken search paging
-# 0.3.0  Rework backend machinery for managing OO interface to results
-# 0.3.1  Add collection support
-# 0.3.2  Remove MythTV key from results.py
-# 0.3.3  Add functional language support
-# 0.3.4  Re-enable search paging
-# 0.3.5  Add methods for grabbing current, popular, and top rated movies
-# 0.3.6  Rework paging mechanism
-# 0.3.7  Generalize caching mechanism, and allow controllability
-# 0.4.0  Add full locale support (language and country) and optional fall through
-# 0.4.1  Add custom classmethod for dealing with IMDB movie IDs
-# 0.4.2  Improve cache file selection for Windows systems
-# 0.4.3  Add a few missed Person properties
-# 0.4.4  Add support for additional Studio information
-# 0.4.5  Add locale fallthrough for images and alternate titles
-# 0.4.6  Add slice support for search results
-# 0.5.0  Rework cache framework and improve file cache performance
-# 0.6.0  Add user authentication support
-# 0.6.1  Add adult filtering for people searches
-# 0.6.2  Add similar movie search for Movie objects
-# 0.6.3  Add Studio search
-# 0.6.4  Add Genre list and associated Movie search
-# 0.6.5  Prevent data from being blanked out by subsequent queries
-# 0.6.6  Turn date processing errors into mutable warnings
-# 0.6.7  Add support for searching by year
-# 0.6.8  Add support for collection images
-# 0.6.9  Correct Movie image language filtering
-# 0.6.10 Add upcoming movie classmethod
-# 0.6.11 Fix URL for top rated Movie query
-# 0.6.12 Add support for Movie watchlist query and editing
-# 0.6.13 Fix URL for rating Movies
-# 0.6.14 Add support for Lists
-# 0.6.15 Add ability to search Collections
-# 0.6.16 Make absent primary images return None (previously u'')
-# 0.6.17 Add userrating/votes to Image, add overview to Collection, remove 
-#           releasedate sorting from Collection Movies
-# 0.7.0  Add support for television series data
-# 0.7.1  Add rate limiter to cache engine
-# 0.7.2  Add similar and keywords to TV Series
-#        Fix unicode issues with search result object names
-#        Temporary fix for youtube videos with malformed URLs
-# 0.7.3  Added a few more missing Person properties:
-#        (gender, imdb, popularity)
-#        Added Video element
-#        Added Movie class method discover
-#        Added missing Movie properties and methods:
-#        (status, originallanguage, video, videos, recommendations)
-#        Updated API statuses (from https://github.com/pawel-zet)
-#        Added Series methods (from https://github.com/alanjds):
-#        (latest, discover, ontheair, airingtoday, mostpopular, toprated)
-#        PEP8 fixes and some typos
-#        Updated readme
+__version__ = "v0.7.4"
 
 from request import set_key, Request
 from util import Datapoint, Datalist, Datadict, Element, NameRepr, SearchRepr
@@ -95,7 +41,7 @@ DEBUG = False
 
 def process_date(datestr):
     try:
-        return datetime.date(*[int(x) for x in datestr.split('-')])
+        return datetime.date(*[int(x) for x in datestr[:10].split('-')])
     except (TypeError, ValueError):
         import sys
         import warnings
@@ -310,7 +256,8 @@ class Poster(Image):
 
 class Profile(Image):
     def sizes(self):
-        return Configuration.images['profile_sizes']
+        experimental = ['w132_and_h132_bestv2', 'w264_and_h264_bestv2']
+        return experimental + Configuration.images['profile_sizes']
 
 
 class Logo(Image):
@@ -404,13 +351,35 @@ class Keyword(Element):
 
 
 class Release(Element):
+
+    TYPES = (
+        (1, 'Premiere'),
+        (2, 'Theatrical (limited)'),
+        (3, 'Theatrical'),
+        (4, 'Digital'),
+        (5, 'Physical'),
+        (6, 'TV'),
+    )
+
     certification = Datapoint('certification')
-    country = Datapoint('iso_3166_1')
-    releasedate = Datapoint('release_date', handler=process_date)
+    language = Datapoint('iso_639_1')
+    # note = Datapoint('note')
+    date = Datapoint('release_date', handler=process_date)
+    type = Datapoint('type')
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.country}', {0.releasedate}>"\
-               .format(self).encode('utf-8')
+        return u"<{0.__class__.__name__} '{0.date} ({0.language})'>".format(self)
+
+    def get_type(self):
+        return self.TYPES[self.type][1]
+
+
+class ReleaseDate(Element):
+    country = Datapoint('iso_3166_1')
+    releases = Datalist('release_dates', handler=Release)
+
+    def __repr__(self):
+        return u"<{0.__class__.__name__} '{0.country}'>".format(self)
 
 
 class Video(Element):
@@ -686,8 +655,8 @@ class Movie(Element):
     def _populate_keywords(self):
         return Request('movie/{0}/keywords'.format(self.id))
 
-    def _populate_releases(self):
-        return Request('movie/{0}/releases'.format(self.id))
+    def _populate_release_dates(self):
+        return Request('movie/{0}/release_dates'.format(self.id))
 
     def _populate_trailers(self):
         return Request('movie/{0}/trailers'.format(self.id),
@@ -713,8 +682,8 @@ class Movie(Element):
                        poller=_populate_images, sort=True)
     keywords = Datalist('keywords', handler=Keyword,
                         poller=_populate_keywords)
-    releases = Datadict('countries', handler=Release,
-                        poller=_populate_releases, attr='country')
+    release_dates = Datadict('results', handler=ReleaseDate,
+                             poller=_populate_release_dates, attr='country')
     youtube_trailers = Datalist('youtube', handler=YoutubeTrailer,
                                 poller=_populate_trailers)
     apple_trailers = Datalist('quicktime', handler=AppleTrailer,
