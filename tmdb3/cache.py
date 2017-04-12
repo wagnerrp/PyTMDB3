@@ -85,7 +85,10 @@ class Cache(object):
                 if w > 0:
                     if DEBUG:
                         print "rate limiting - waiting {0} seconds".format(w)
-                    time.sleep(w)
+                    try:
+                        time.sleep(w)
+                    except IOError:
+                        pass
             return None
 
     def cached(self, callback):
