@@ -259,7 +259,7 @@ class Datadict(Data):
                        the field name from the source data is used instead
             attr    -- (optional) name of attribute in resultant data to be
                        used as the key in the stored dictionary. if this is
-                       not the field name from the source data is used
+                       None, the field name from the source data is used
                        instead
             raw     -- (optional) if the specified handler is an Element
                        class, the data will be passed into it using the
@@ -293,7 +293,8 @@ class Datadict(Data):
                 data[self.getkey(val)] = val
         inst._data[self.field] = data
 
-class ElementType( type ):
+
+class ElementType(type):
     """
     MetaClass used to pre-process Element-derived classes and set up the
     Data definitions
@@ -305,7 +306,7 @@ class ElementType( type ):
         # a copy into this class's attributes
         # run in reverse order so higher priority values overwrite lower ones
         data = {}
-        pollers = {'_populate':None}
+        pollers = {'_populate': None}
 
         for base in reversed(bases):
             if isinstance(base, mcs):
@@ -326,7 +327,7 @@ class ElementType( type ):
         if '_populate' in attrs:
             pollers['_populate'] = attrs['_populate']
 
-        # process all defined Data attribues, testing for use as an initial
+        # process all defined Data attributes, testing for use as an initial
         # argument, and building a list of what Pollers are used to populate
         # which Data points
         pollermap = dict([(k, []) for k in pollers])
@@ -359,7 +360,7 @@ class ElementType( type ):
                 attr.poller = poller
                 attrs[attr.name] = attr
 
-        # build sorted list of arguments used for intialization
+        # build sorted list of arguments used for initialization
         attrs['_InitArgs'] = tuple(
                 [a.name for a in sorted(initargs, key=lambda x: x.initarg)])
         return type.__new__(mcs, name, bases, attrs)
@@ -397,6 +398,6 @@ class ElementType( type ):
         return obj
 
 
-class Element( object ):
+class Element(object):
     __metaclass__ = ElementType
     _lang = 'en'

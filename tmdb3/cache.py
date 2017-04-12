@@ -18,6 +18,7 @@ import cache_file
 
 DEBUG = False
 
+
 class Cache(object):
     """
     This class implements a cache framework, allowing selecting of a
@@ -81,10 +82,13 @@ class Cache(object):
             # wait to ensure proper rate limiting
             if len(self._rate_limiter) == 30:
                 w = 10 - (time.time() - self._rate_limiter.pop(0))
-                if (w > 0):
+                if w > 0:
                     if DEBUG:
                         print "rate limiting - waiting {0} seconds".format(w)
-                    time.sleep(w)
+                    try:
+                        time.sleep(w)
+                    except IOError:
+                        pass
             return None
 
     def cached(self, callback):
@@ -94,7 +98,7 @@ class Cache(object):
         """
         return self.Cached(self, callback)
 
-    class Cached( object ):
+    class Cached(object):
         def __init__(self, cache, callback, func=None, inst=None):
             self.cache = cache
             self.callback = callback

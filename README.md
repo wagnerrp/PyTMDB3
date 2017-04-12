@@ -225,17 +225,20 @@ List of Available Data
 |  string               | tagline            |                                        |
 |  string               | overview           |                                        |
 |  integer              | runtime            |                                        |
+|  string               | status             |                                        |
 |  integer              | budget             |                                        |
 |  integer              | revenue            |                                        |
 |  datetime             | releasedate        |                                        |
+|  string               | originallanguage   |                                        |
 |  string               | homepage           |                                        |
-|  string               | IMDB reference id  | 'ttXXXXXXX'                            |
+|  string               | imdb               | imdb reference: 'ttXXXXXXX'            |
 |  Backdrop             | backdrop           |                                        |
 |  Poster               | poster             |                                        |
 |  float                | popularity         |                                        |
 |  float                | userrating         |                                        |
 |  integer              | votes              |                                        |
 |  boolean              | adult              |                                        |
+|  boolean              | video              |                                        |
 |  Collection           | collection         |                                        |
 |  list(Genre)          | genres             |                                        |
 |  list(Studio)         | studios            |                                        |
@@ -246,12 +249,14 @@ List of Available Data
 |  list(Crew)           | crew               |                                        |
 |  list(Backdrop)       | backdrops          |                                        |
 |  list(Poster)         | posters            |                                        |
+|  list(Video)          | videos             |                                        |
 |  list(Keyword)        | keywords           |                                        |
-|  dict(Release)        | releases           | indexed by country                     |
+|  dict(ReleaseDate)    | release_dates      | indexed by country                     |
 |  list(Translation)    | translations       |                                        |
 |  list(Movie)          | similar            |                                        |
 |  list(List)           | lists              |                                        |
 |  list(Movie)          | getSimilar()       |                                        |
+|  list(Movie)          | recommendations    |                                        |
 |  None                 | setFavorite(bool)  | mark favorite status for current user  |
 |  None                 | setRating(int)     | rate movie by current user             |
 |  None                 | setWatchlist(bool) | mark watchlist status for current user |
@@ -268,6 +273,7 @@ List of Available Data
 |  list(Movie)          | favorites()        | current user's favorite movies              |
 |  list(Movie)          | ratedmovies()      | movies rated by current user                |
 |  list(Movie)          | watchlist()        | movies marked to watch by current user      |
+|  list(Movie)          | discover()         | discover movies by different types of data  |
 
 #### Series:
 |  type                 | name               |
@@ -374,6 +380,9 @@ List of Available Data
 |  string               | homepage           |
 |  Profile              | profile            |
 |  boolean              | adult              |
+|  integer              | gender             |
+|  string               | imdb               |
+|  float                | popularity         |
 |  list(string)         | aliases            |
 |  list(ReverseCast)    | roles              |
 |  list(ReverseCrew)    | crew               |
@@ -517,3 +526,64 @@ Logo (derived from `Image`)
 |  dict(Trailer)       |  sources            | indexed by size |
 |  list(string)        |  sizes()            |                 |
 |  string              |  geturl(size=None)  |                 |
+
+
+Changelog
+---------
+- 0.1.0  Initial development
+- 0.2.0  Add caching mechanism for API queries
+- 0.2.1  Temporary work around for broken search paging
+- 0.3.0  Rework backend machinery for managing OO interface to results
+- 0.3.1  Add collection support
+- 0.3.2  Remove MythTV key from results.py
+- 0.3.3  Add functional language support
+- 0.3.4  Re-enable search paging
+- 0.3.5  Add methods for grabbing current, popular, and top rated movies
+- 0.3.6  Rework paging mechanism
+- 0.3.7  Generalize caching mechanism, and allow controllability
+- 0.4.0  Add full locale support (language and country) and optional fall through
+- 0.4.1  Add custom classmethod for dealing with IMDB movie IDs
+- 0.4.2  Improve cache file selection for Windows systems
+- 0.4.3  Add a few missed Person properties
+- 0.4.4  Add support for additional Studio information
+- 0.4.5  Add locale fallthrough for images and alternate titles
+- 0.4.6  Add slice support for search results
+- 0.5.0  Rework cache framework and improve file cache performance
+- 0.6.0  Add user authentication support
+- 0.6.1  Add adult filtering for people searches
+- 0.6.2  Add similar movie search for Movie objects
+- 0.6.3  Add Studio search
+- 0.6.4  Add Genre list and associated Movie search
+- 0.6.5  Prevent data from being blanked out by subsequent queries
+- 0.6.6  Turn date processing errors into mutable warnings
+- 0.6.7  Add support for searching by year
+- 0.6.8  Add support for collection images
+- 0.6.9  Correct Movie image language filtering
+- 0.6.10 Add upcoming movie classmethod
+- 0.6.11 Fix URL for top rated Movie query
+- 0.6.12 Add support for Movie watchlist query and editing
+- 0.6.13 Fix URL for rating Movies
+- 0.6.14 Add support for Lists
+- 0.6.15 Add ability to search Collections
+- 0.6.16 Make absent primary images return None (previously u'')
+- 0.6.17 Add userrating/votes to Image, add overview to Collection, remove
+         releasedate sorting from Collection Movies
+- 0.7.0  Add support for television series data
+- 0.7.1  Add rate limiter to cache engine
+- 0.7.2  Add similar and keywords to TV Series,
+         Fix unicode issues with search result object names,
+         Temporary fix for youtube videos with malformed URLs.
+- 0.7.3  Added a few more missing Person properties:
+         (gender, imdb, popularity),
+         Added Video element,
+         Added Movie class method discover,
+         Added missing Movie properties and methods:
+         (status, originallanguage, video, videos, recommendations),
+         Updated API statuses (from https://github.com/pawel-zet),
+         Added Series methods (from https://github.com/alanjds):
+         (latest, discover, ontheair, airingtoday, mostpopular, toprated),
+         PEP8 fixes and some typos,
+         Updated readme.
+- 0.7.4  Added experimental sizes to profiles,
+         Fixed process_date to handle input dates like "1987-04-03T00:00:00.000Z",
+         Replaced Movie.releases with Movie.release_dates, following the API.

@@ -1,6 +1,7 @@
-# GVIM stuff #
-##############
+# Editor stuff #
+################
 .*.swp
+.idea
 
 # Python stuff #
 ################
